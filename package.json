@@ -1,0 +1,41 @@
+{
+  "name": "nest-clone",
+  "version": "1.0.0",
+  "description": "nest js clone",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/joyfulprogrammers/nest-clone.git"
+  },
+  "keywords": [],
+  "contributors": [
+    {
+      "name": "erie0210",
+      "email": "2j00923@gmail.com",
+      "url": "https://github.com/erie0210"
+    },
+    {
+      "name": "Jake Son",
+      "email": "sonjeabin@gmail.com",
+      "url": "https://github.com/jbl428"
+    },
+    {
+      "name": "imdudu1",
+      "email": "cd80@kakao.com",
+      "url": "https://github.com/imdudu1"
+    },
+    {
+      "name": "username1103",
+      "email": "mikim961103@gmail.com",
+      "url": "https://github.com/username1103"
+    }
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/joyfulprogrammers/nest-clone/issues"
+  },
+  "homepage": "https://github.com/joyfulprogrammers/nest-clone#readme"
+}
