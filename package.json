@@ -4,7 +4,7 @@
   "description": "nest js clone",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "vitest"
   },
   "repository": {
     "type": "git",
@@ -37,5 +37,21 @@
   "bugs": {
     "url": "https://github.com/joyfulprogrammers/nest-clone/issues"
   },
-  "homepage": "https://github.com/joyfulprogrammers/nest-clone#readme"
+  "homepage": "https://github.com/joyfulprogrammers/nest-clone#readme",
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.0.0",
+    "eslint": "^8.0.1",
+    "eslint-config-prettier": "^8.6.0",
+    "eslint-config-standard-with-typescript": "^34.0.0",
+    "eslint-plugin-import": "^2.25.2",
+    "eslint-plugin-n": "^15.0.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-promise": "^6.0.0",
+    "prettier": "^2.8.4",
+    "typescript": "*",
+    "vitest": "^0.28.4"
+  },
+  "dependencies": {
+    "eslint-plugin-jest-formatting": "^3.1.0"
+  }
 }
