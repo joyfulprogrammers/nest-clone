@@ -12,4 +12,14 @@ parserOptions:
   sourceType: module
 rules: {
   semi: ['error', 'always'],
+  import/order: [
+    'error',
+    {
+      groups: [ 'builtin', 'external', [ 'parent', 'sibling' ], 'index' ],
+      alphabetize: {
+        order: 'asc',
+        caseInsensitive: true,
+      },
+    },
+  ],
 }
