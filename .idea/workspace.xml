@@ -2,17 +2,21 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="71f6bf37-0c80-41bc-a922-f50385f842a0" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.husky/commit-msg" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pnpm-lock.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pnpm-lock.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/example.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/example.ts" afterDir="false" />
     </list>
-    <list id="e6182cc2-cea4-4691-a00c-e6ce18f38499" name="Changes by haru" comment="" />
-    <list id="d3109d5b-e3b1-4056-8525-8744ddbce64c" name="Changes by int" comment="" />
-    <list id="c94de822-9db2-4a5c-a3b5-965e9f5e167d" name="Changes by myeongil" comment="">
+    <list id="e6182cc2-cea4-4691-a00c-e6ce18f38499" name="Changes by haru" comment="">
       <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
     </list>
-    <list id="eb25a920-9571-40cd-9ca6-61e7e568e90f" name="Changes by yohan" comment="" />
+    <list id="d3109d5b-e3b1-4056-8525-8744ddbce64c" name="Changes by int" comment="">
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+    </list>
+    <list id="c94de822-9db2-4a5c-a3b5-965e9f5e167d" name="Changes by myeongil" comment="" />
     <list id="a1031454-6a47-4f05-bbec-f9a5d2dae3ab" name="Changes by Yohan" comment="" />
+    <list id="eb25a920-9571-40cd-9ca6-61e7e568e90f" name="Changes by yohan" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -31,9 +35,10 @@
   <component name="LineStatusTrackerManager">
     <file path="$PROJECT_DIR$/package.json">
       <ranges>
-        <range start1="6" end1="7" start2="6" end2="8" changelist="71f6bf37-0c80-41bc-a922-f50385f842a0" />
-        <range start1="49" end1="49" start2="50" end2="52" changelist="71f6bf37-0c80-41bc-a922-f50385f842a0" />
-        <range start1="55" end1="55" start2="58" end2="61" changelist="c94de822-9db2-4a5c-a3b5-965e9f5e167d" />
+        <range start1="34" end1="34" start2="34" end2="39" changelist="e6182cc2-cea4-4691-a00c-e6ce18f38499" />
+        <range start1="42" end1="42" start2="47" end2="49" changelist="71f6bf37-0c80-41bc-a922-f50385f842a0" />
+        <range start1="47" end1="47" start2="54" end2="55" changelist="71f6bf37-0c80-41bc-a922-f50385f842a0" />
+        <range start1="56" end1="59" start2="64" end2="64" changelist="d3109d5b-e3b1-4056-8525-8744ddbce64c" />
       </ranges>
     </file>
   </component>
@@ -60,7 +65,7 @@
     "nodejs_package_manager_path": "npm",
     "prettierjs.PrettierConfiguration.Package": "/Users/ijaeyeong/Desktop/nest-clone/node_modules/prettier",
     "settings.editor.selected.configurable": "settings.javascript.linters.eslint",
-    "ts.external.directory.path": "/Users/ijaeyeong/Desktop/nest/nest-clone/node_modules/typescript/lib",
+    "ts.external.directory.path": "/Applications/WebStorm.app/Contents/plugins/JavaScriptLanguage/jsLanguageServicesImpl/external",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
