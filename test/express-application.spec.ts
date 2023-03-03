@@ -6,7 +6,7 @@ describe("ExpressApplication", () => {
   it("listen", async () => {
     // given
     const app = new ExpressApplication();
-    await app.listen({ port: 8888 });
+    await app.listen({ port: 0 });
     const server = app.getHttpServer();
 
     // when
@@ -22,7 +22,7 @@ describe("ExpressApplication", () => {
   it("close", async () => {
     // given
     const app = new ExpressApplication();
-    await app.listen({ port: 8889 });
+    await app.listen({ port: 0 });
     const server = app.getHttpServer();
 
     // when
