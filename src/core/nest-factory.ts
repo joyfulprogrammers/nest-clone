@@ -1,7 +1,7 @@
+import { ContainerContextManager } from "./container/container-context-manager";
 import {
   MODULE_METADATA,
   type ModuleMetadata,
-  moduleContainer,
 } from "./decorator/module-decorator";
 import { type NestApplication } from "./interface/nest-application.interface";
 import { ExpressApplication } from "./platform-express/express-application";
