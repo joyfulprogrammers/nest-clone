@@ -6,7 +6,6 @@ import {
 import { type NestApplication } from "./interface/nest-application.interface";
 import { ExpressApplication } from "./platform-express/express-application";
 
-// eslint-disable-next-line @typescript-eslint/no-extraneous-class
 export class NestFactory {
   static create(appModule: any): NestApplication {
     const metadata: ModuleMetadata | undefined = Reflect.get(
@@ -18,7 +17,7 @@ export class NestFactory {
       throw new Error("Module decorator is not provided");
     }
 
-    moduleContainer.push(metadata);
+    ContainerContextManager.addModule(metadata);
     recur(metadata.imports);
 
     return new ExpressApplication();
@@ -36,7 +35,7 @@ function recur(modules: any[] = []): void {
       return;
     }
 
-    moduleContainer.push(metadata);
+    ContainerContextManager.addModule(metadata);
     recur(metadata.imports);
   }
 }

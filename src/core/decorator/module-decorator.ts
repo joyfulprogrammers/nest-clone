@@ -6,8 +6,6 @@ export function Module(metadata: ModuleMetadata): ClassDecorator {
   };
 }
 
-export const moduleContainer: ModuleMetadata[] = [];
-
 export interface ModuleMetadata {
   imports?: any[];
   providers?: any[];

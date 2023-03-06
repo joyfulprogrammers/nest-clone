@@ -1,11 +1,13 @@
-import { describe, it, expect } from "vitest";
-import {
-  Module,
-  moduleContainer,
-} from "../src/core/decorator/module-decorator";
+import { describe, it, expect, beforeEach } from "vitest";
+import { ContainerContextManager } from "../src/core/container/container-context-manager";
+import { Module } from "../src/core/decorator/module-decorator";
 import { NestFactory } from "../src/core/nest-factory";
 
 describe("app module", () => {
+  beforeEach(() => {
+    (ContainerContextManager.moduleContainer as any) = [];
+  });
+
   it("should define Module decorator", () => {
     @Module({})
     class AppModule {}
@@ -29,6 +31,6 @@ describe("app module", () => {
 
     NestFactory.create(AppModule);
 
-    expect(moduleContainer).toHaveLength(3);
+    expect(ContainerContextManager.moduleContainer).toHaveLength(3);
   });
 });
