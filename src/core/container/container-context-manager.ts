@@ -1,13 +1,13 @@
-import { type ModuleMetadata } from "../decorator/module-decorator";
+import { type DynamicModuleMetadata } from "../decorator/module-decorator";
 
 export class ContainerContextManager {
-  #moduleContainer: ModuleMetadata[] = [];
+  #moduleContainer: DynamicModuleMetadata[] = [];
 
-  addModule(module: ModuleMetadata): void {
+  addModule(module: DynamicModuleMetadata): void {
     this.#moduleContainer.push(module);
   }
 
-  getModules(): ModuleMetadata[] {
+  getModules(): DynamicModuleMetadata[] {
     return this.#moduleContainer;
   }
 

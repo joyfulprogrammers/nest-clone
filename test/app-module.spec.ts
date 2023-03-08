@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { Module } from "../src/core/decorator/module-decorator";
+import { Module, Global } from "../src/core/decorator/module-decorator";
 import { DiscoveryService } from "../src/core/discovery.service";
 import { NestFactory } from "../src/core/nest-factory";
 
@@ -21,6 +21,29 @@ describe("app module", () => {
     @Module({})
     class ChildAModule {}
 
+    @Module({})
+    class ChildBModule {}
+
+    @Module({
+      imports: [ChildAModule, ChildBModule],
+    })
+    class AppModule {}
+
+    // when
+    const app = NestFactory.create(AppModule);
+
+    // then
+    const discoveryService = app.get(DiscoveryService);
+    expect(discoveryService.getModules()).toHaveLength(3);
+  });
+
+  it("load modules recursively", () => {
+    // given
+    @Module({})
+    @Global()
+    class ChildAModule {}
+
+    @Global()
     @Module({})
     class ChildBModule {}
 

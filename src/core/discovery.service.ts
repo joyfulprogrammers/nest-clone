@@ -1,7 +1,7 @@
 import { ContainerContextManager } from "./container/container-context-manager";
 import {
+  type DynamicModuleMetadata,
   MODULE_METADATA,
-  type ModuleMetadata,
 } from "./decorator/module-decorator";
 
 export class DiscoveryService {
@@ -16,7 +16,7 @@ export class DiscoveryService {
    * 모듈을 받아서 모듈들 탐색해서 container 추가
    */
   private search(rootModule: any): void {
-    const metadata: ModuleMetadata | undefined = Reflect.get(
+    const metadata: DynamicModuleMetadata | undefined = Reflect.get(
       rootModule,
       MODULE_METADATA
     );
@@ -31,7 +31,7 @@ export class DiscoveryService {
 
   private recur(modules: any[] = []): void {
     for (const module of modules) {
-      const metadata: ModuleMetadata | undefined = Reflect.get(
+      const metadata: DynamicModuleMetadata | undefined = Reflect.get(
         module,
         MODULE_METADATA
       );
@@ -45,15 +45,15 @@ export class DiscoveryService {
     }
   }
 
-  getProviders(): any[] {
+  getProviders(): DynamicModuleMetadata[] {
     return this.#container.getProviders();
   }
 
-  getControllers(): any[] {
+  getControllers(): DynamicModuleMetadata[] {
     return this.#container.getControllers();
   }
 
-  getModules(): ModuleMetadata[] {
+  getModules(): DynamicModuleMetadata[] {
     return this.#container.getModules();
   }
 }

@@ -1,12 +1,29 @@
 export const MODULE_METADATA = Symbol("moduleMetadata");
 
+export function Global(): ClassDecorator {
+  return (target: any) => {
+    const metadata = Reflect.get(target, MODULE_METADATA);
+
+    Reflect.defineProperty(target, MODULE_METADATA, {
+      value: { ...metadata, global: true },
+      enumerable: true,
+      configurable: true,
+    });
+  };
+}
+
 export function Module(metadata: ModuleMetadata): ClassDecorator {
   return (target: any) => {
+    const parentMetadata = Reflect.get(target, MODULE_METADATA);
+
     Reflect.defineProperty(target, MODULE_METADATA, {
-      value: { module: target, ...metadata, global: false },
-      writable: false,
+      value: {
+        ...metadata,
+        module: target,
+        global: parentMetadata?.global || false,
+      },
       enumerable: true,
-      configurable: false,
+      configurable: true,
     });
   };
 }
@@ -18,7 +35,7 @@ export interface ModuleMetadata {
   exports?: any[];
 }
 
-export interface DynamicModule extends ModuleMetadata {
+export interface DynamicModuleMetadata extends ModuleMetadata {
   module: any;
   global: boolean;
 }
