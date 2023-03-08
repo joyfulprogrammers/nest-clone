@@ -1,23 +1,23 @@
-import { describe, it, expect, beforeEach } from "vitest";
-import { ContainerContextManager } from "../src/core/container/container-context-manager";
+import { describe, expect, it } from "vitest";
 import { Module } from "../src/core/decorator/module-decorator";
+import { DiscoveryService } from "../src/core/discovery.service";
 import { NestFactory } from "../src/core/nest-factory";
 
 describe("app module", () => {
-  beforeEach(() => {
-    (ContainerContextManager.moduleContainer as any) = [];
-  });
-
   it("should define Module decorator", () => {
+    // given
     @Module({})
     class AppModule {}
 
+    // when
     const app = NestFactory.create(AppModule);
 
+    // then
     expect(app).toBeDefined();
   });
 
   it("load modules recursively", () => {
+    // given
     @Module({})
     class ChildAModule {}
 
@@ -29,8 +29,11 @@ describe("app module", () => {
     })
     class AppModule {}
 
-    NestFactory.create(AppModule);
+    // when
+    const app = NestFactory.create(AppModule);
 
-    expect(ContainerContextManager.moduleContainer).toHaveLength(3);
+    // then
+    const discoveryService = app.get(DiscoveryService);
+    expect(discoveryService.getModules()).toHaveLength(3);
   });
 });

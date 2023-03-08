@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { NestFactory } from "../src/core/nest-factory";
-import { ContainerContextManager } from "../src/core/container/container-context-manager";
 import { Module } from "../src/core/decorator/module-decorator";
+import { DiscoveryService } from "../src/core/discovery.service";
+import { NestFactory } from "../src/core/nest-factory";
 
-describe.skip("controller", () => {
+describe("controller", () => {
   it("@Controller", () => {
     // given
     function Controller(path: string): ClassDecorator {
@@ -11,7 +11,6 @@ describe.skip("controller", () => {
         // save reflect?
       };
     }
-
     @Controller("/test")
     class TestController {}
 
@@ -21,12 +20,11 @@ describe.skip("controller", () => {
     class AppModule {}
 
     // when
-    NestFactory.create(AppModule);
+    const app = NestFactory.create(AppModule);
 
     // then
-    expect(ContainerContextManager.moduleContainer[0].controllers).toHaveLength(
-      1
-    );
+    const discoveryService = app.get(DiscoveryService);
+    expect(discoveryService.getControllers()).toHaveLength(1);
   });
 
   it("@Get", async () => {
@@ -34,9 +32,13 @@ describe.skip("controller", () => {
     function Controller(prefixPath: string): ClassDecorator {
       return (target) => {
         const router = [] as any[];
-        Reflect.ownKeys(target.prototype).map((key) => {
-          const route = Reflect.get(target.prototype[key], "PATH");
-          if (route && route?.path && route?.method) {
+
+        Reflect.ownKeys(target.prototype).forEach((key) => {
+          const route: Record<string, string> = Reflect.get(
+            target.prototype[key],
+            "PATH"
+          );
+          if (route?.path && route?.method) {
             router.push({
               path: `${prefixPath}${route.path}`,
               method: route.method,
@@ -52,14 +54,14 @@ describe.skip("controller", () => {
 
     function Get(path: string): MethodDecorator {
       return (target, propertyKey, descriptor) => {
-        Reflect.defineProperty(target[propertyKey], "PATH", {
+        Reflect.defineProperty((target as any)[propertyKey], "PATH", {
           value: {
             method: "GET",
-            path: path,
+            path,
           },
           enumerable: true,
-          configurable: true,
-          writable: true,
+          configurable: false,
+          writable: false,
         });
       };
     }
@@ -67,7 +69,7 @@ describe.skip("controller", () => {
     @Controller("/api")
     class TestController {
       @Get("/say")
-      sayHi(req: any, res: any, _next: any) {
+      sayHi(req: any, res: any, _next: any): void {
         res.json("hello2");
       }
     }
