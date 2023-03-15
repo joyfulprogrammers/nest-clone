@@ -1,8 +1,8 @@
-import { ContainerContextManager } from "./container/container-context-manager";
+import { ContainerContextManager } from "../container/container-context-manager";
 import {
   type DynamicModuleMetadata,
   MODULE_METADATA,
-} from "./decorator/module-decorator";
+} from "../decorator/module.decorator";
 
 export class DiscoveryService {
   #container = new ContainerContextManager();

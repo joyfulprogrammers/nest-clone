@@ -1,4 +1,4 @@
-import { type DynamicModuleMetadata } from "../decorator/module-decorator";
+import { type DynamicModuleMetadata } from "../decorator/module.decorator";
 
 export class ContainerContextManager {
   #moduleContainer: DynamicModuleMetadata[] = [];

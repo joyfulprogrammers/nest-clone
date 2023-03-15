@@ -1,9 +1,9 @@
 import type * as http from "http";
 import express, { type Express } from "express";
-import { type DiscoveryService } from "../discovery.service";
 import { type ApplicationOptions } from "../interface/application-options.interface";
 import { type Logger } from "../interface/logger.interface";
 import { type NestApplication } from "../interface/nest-application.interface";
+import { type DiscoveryService } from "../service/discovery.service";
 import { type Type } from "../type/type";
 
 export class ExpressApplication implements NestApplication {

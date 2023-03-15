@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { Module, Global } from "../src/core/decorator/module-decorator";
-import { DiscoveryService } from "../src/core/discovery.service";
-import { NestFactory } from "../src/core/nest-factory";
+import { Module, Global } from "../decorator/module.decorator";
+import { NestFactory } from "../nest-factory";
+import { DiscoveryService } from "../service/discovery.service";
 
 describe("app module", () => {
   it("should define Module decorator", () => {

@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { Module } from "../src/core/decorator/module-decorator";
-import { DiscoveryService } from "../src/core/discovery.service";
+import { Module } from "../../decorator/module.decorator";
+import { DiscoveryService } from "../../service/discovery.service";
 
 describe("DiscoveryService", () => {
   it("getModules", () => {

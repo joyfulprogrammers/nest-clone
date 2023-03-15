@@ -1,4 +1,4 @@
-import { HTTP_METHOD_METADATA } from "./request-decorator";
+import { HTTP_METHOD_METADATA } from "./request.decorator";
 
 export const ROUTE_METADATA = Symbol("routeMetadata");
 

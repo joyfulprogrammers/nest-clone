@@ -1,7 +1,7 @@
 import request from "supertest";
 import { describe, it, expect } from "vitest";
-import { DiscoveryService } from "../src/core/discovery.service";
-import { ExpressApplication } from "../src/core/platform-express/express-application";
+import { ExpressApplication } from "../../platform-express/express-application";
+import { DiscoveryService } from "../../service/discovery.service";
 
 describe("ExpressApplication", () => {
   it("listen", async () => {
