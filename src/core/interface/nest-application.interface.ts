@@ -9,4 +9,5 @@ export interface NestApplication {
     // eslint-disable-next-line @typescript-eslint/ban-types
     typeOrToken: Type<TInput> | Function | string | symbol
   ) => TResult;
+  setGlobalPrefix: (prefix: string) => void;
 }

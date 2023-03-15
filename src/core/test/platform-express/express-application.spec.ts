@@ -9,7 +9,9 @@ import { DiscoveryService } from "../../service/discovery.service";
 describe("ExpressApplication", () => {
   it("listen", async () => {
     // given
-    const app = new ExpressApplication(new DiscoveryService());
+    @Module({})
+    class AppModule {}
+    const app = new ExpressApplication(new DiscoveryService(AppModule));
     await app.listen({ port: 0 });
     const server = app.getHttpServer();
 
@@ -47,9 +49,36 @@ describe("ExpressApplication", () => {
     await app.close();
   });
 
+  it("route", async () => {
+    // given
+    @Controller("/post")
+    class ControllerA {
+      @Get()
+      index(): string {
+        return "ok";
+      }
+    }
+    @Module({ controllers: [ControllerA] })
+    class AppModule {}
+    const app = new ExpressApplication(new DiscoveryService(AppModule));
+    app.setGlobalPrefix("/api");
+    await app.listen({ port: 0 });
+    const server = app.getHttpServer();
+
+    // when
+    const response = await request(server).get("/api/post");
+
+    // then
+    expect(response.status).toBe(200);
+
+    await app.close();
+  });
+
   it("close", async () => {
     // given
-    const app = new ExpressApplication(new DiscoveryService());
+    @Module({})
+    class AppModule {}
+    const app = new ExpressApplication(new DiscoveryService(AppModule));
     await app.listen({ port: 0 });
     const server = app.getHttpServer();
 

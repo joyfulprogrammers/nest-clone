@@ -12,11 +12,16 @@ export class ExpressApplication implements NestApplication {
   readonly #app: Express = express();
   readonly #router = express.Router();
   #server?: http.Server;
+  #globalPrefix = "/";
 
   constructor(
     private readonly discoveryService: DiscoveryService,
     private readonly logger: Logger = console
   ) {}
+
+  setGlobalPrefix(prefix: string): void {
+    this.#globalPrefix = prefix;
+  }
 
   async listen(options?: ApplicationOptions): Promise<void> {
     this.initRoutes();
@@ -74,6 +79,6 @@ export class ExpressApplication implements NestApplication {
       });
     });
 
-    this.#app.use("/", this.#router);
+    this.#app.use(this.#globalPrefix, this.#router);
   }
 }

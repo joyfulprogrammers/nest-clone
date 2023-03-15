@@ -12,10 +12,12 @@ export class ContainerContextManager {
   }
 
   getProviders(): any[] {
-    return this.#moduleContainer.flatMap((module) => module.providers);
+    return this.#moduleContainer.flatMap((module) => module.providers ?? []);
   }
 
   getControllers(): any[] {
-    return this.#moduleContainer.flatMap((metadata) => metadata.controllers);
+    return this.#moduleContainer.flatMap(
+      (metadata) => metadata.controllers ?? []
+    );
   }
 }
