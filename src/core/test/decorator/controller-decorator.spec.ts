@@ -1,84 +1,67 @@
 import { describe, expect, it } from "vitest";
-import { Module } from "../../decorator/module.decorator";
-import { NestFactory } from "../../nest-factory";
-import { DiscoveryService } from "../../service/discovery.service";
+import {
+  Controller,
+  ROUTE_METADATA,
+  type Router,
+} from "../../decorator/controller.decorator";
+import {
+  Delete,
+  Get,
+  HTTP_METHOD,
+  Post,
+  Put,
+  Patch,
+  Head,
+  Options,
+} from "../../decorator/request.decorator";
 
-describe("controller", () => {
-  it("@Controller", () => {
+describe("@controller", () => {
+  it("should set metadata for controller", () => {
     // given
-    function Controller(path: string): ClassDecorator {
-      return (clazz) => {
-        // save reflect?
-      };
-    }
     @Controller("/test")
     class TestController {}
 
-    @Module({
-      controllers: [TestController],
-    })
-    class AppModule {}
-
-    // when
-    const app = NestFactory.create(AppModule);
-
     // then
-    const discoveryService = app.get(DiscoveryService);
-    expect(discoveryService.getControllers()).toHaveLength(1);
+    const metadata: Router[] = Reflect.get(TestController, ROUTE_METADATA);
+    expect(metadata).toHaveLength(0);
   });
 
-  it("@Get", async () => {
-    // given
-    function Controller(prefixPath: string): ClassDecorator {
-      return (target) => {
-        const router = [] as any[];
-
-        Reflect.ownKeys(target.prototype).forEach((key) => {
-          const route: Record<string, string> = Reflect.get(
-            target.prototype[key],
-            "PATH"
-          );
-          if (route?.path && route?.method) {
-            router.push({
-              path: `${prefixPath}${route.path}`,
-              method: route.method,
-            });
-          }
-        });
-
-        Reflect.defineProperty(target, "ROUTE", {
-          value: router,
-        });
-      };
-    }
-
-    function Get(path: string): MethodDecorator {
-      return (target, propertyKey, descriptor) => {
-        Reflect.defineProperty((target as any)[propertyKey], "PATH", {
-          value: {
-            method: "GET",
-            path,
-          },
-          enumerable: true,
-          configurable: false,
-          writable: false,
-        });
-      };
-    }
-
-    @Controller("/api")
+  it.each([
+    [HTTP_METHOD.GET, Get],
+    [HTTP_METHOD.POST, Post],
+    [HTTP_METHOD.PATCH, Patch],
+    [HTTP_METHOD.PUT, Put],
+    [HTTP_METHOD.DELETE, Delete],
+    [HTTP_METHOD.OPTIONS, Options],
+    [HTTP_METHOD.HEAD, Head],
+  ] as const)("should not set metadata for %s", (method, decorator) => {
+    @Controller()
     class TestController {
-      @Get("/say")
-      sayHi(req: any, res: any, _next: any): void {
-        res.json("hello2");
+      @decorator()
+      test(): string {
+        return "";
       }
     }
 
-    // when, then
-    expect(Reflect.get(TestController, "ROUTE")).toHaveLength(1);
-    expect(Reflect.get(TestController, "ROUTE")[0]).toStrictEqual({
-      path: "/api/say",
-      method: "GET",
-    });
+    // then
+    const metadata: Router[] = Reflect.get(TestController, ROUTE_METADATA);
+    expect(metadata).toHaveLength(1);
+    expect(metadata[0].method).toBe(method);
+    expect(metadata[0].path).toBe("/");
+  });
+
+  it("should replace path with only only slash", () => {
+    @Controller("//")
+    class TestController {
+      @Get("//")
+      test(): string {
+        return "";
+      }
+    }
+
+    // then
+    const metadata: Router[] = Reflect.get(TestController, ROUTE_METADATA);
+    expect(metadata).toHaveLength(1);
+    expect(metadata[0].path).toBe("/");
   });
 });

@@ -1,17 +1,13 @@
-import { HTTP_METHOD_METADATA } from "./request.decorator";
+import { type HTTP_METHOD, HTTP_METHOD_METADATA } from "./request.decorator";
 
 export const ROUTE_METADATA = Symbol("routeMetadata");
-
-export enum HTTP_METHOD {
-  GET = "GET",
-}
 
 export interface Router {
   path: string;
   method: HTTP_METHOD;
 }
 
-export function Controller(prefixPath: string): ClassDecorator {
+export function Controller(prefixPath = "/"): ClassDecorator {
   return (target) => {
     const router: Router[] = [];
 
@@ -23,7 +19,7 @@ export function Controller(prefixPath: string): ClassDecorator {
 
       if (route?.path && route?.method) {
         router.push({
-          path: `${prefixPath}${route.path}`,
+          path: `${prefixPath}${route.path}`.replace(/\/+/g, "/"),
           method: route.method,
         });
       }

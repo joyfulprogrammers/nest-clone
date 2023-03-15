@@ -1,6 +1,6 @@
 export const HTTP_METHOD_METADATA = Symbol("httpMethodMetadata");
 
-export enum HTTP_METHOD {
+export const enum HTTP_METHOD {
   GET = "GET",
   POST = "POST",
   PUT = "PUT",
@@ -10,7 +10,7 @@ export enum HTTP_METHOD {
   HEAD = "HEAD",
 }
 
-export function RequestMapping(method: HTTP_METHOD) {
+function RequestMapping(method: HTTP_METHOD) {
   return function (path = "/"): MethodDecorator {
     return (target, propertyKey) => {
       Reflect.defineProperty(
