@@ -49,7 +49,7 @@ describe("ExpressApplication", () => {
     await app.close();
   });
 
-  it("route", async () => {
+  it("setGlobalPrefix && route", async () => {
     // given
     @Controller("/post")
     class ControllerA {
