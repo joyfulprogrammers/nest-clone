@@ -1,5 +1,7 @@
 import type * as http from "http";
 import express, { type Express } from "express";
+import { ROUTE_METADATA, type Router } from "../decorator/controller.decorator";
+import { type HTTP_METHOD } from "../decorator/request.decorator";
 import { type ApplicationOptions } from "../interface/application-options.interface";
 import { type Logger } from "../interface/logger.interface";
 import { type NestApplication } from "../interface/nest-application.interface";
@@ -8,6 +10,7 @@ import { type Type } from "../type/type";
 
 export class ExpressApplication implements NestApplication {
   readonly #app: Express = express();
+  readonly #router = express.Router();
   #server?: http.Server;
 
   constructor(
@@ -16,6 +19,8 @@ export class ExpressApplication implements NestApplication {
   ) {}
 
   async listen(options?: ApplicationOptions): Promise<void> {
+    this.initRoutes();
+
     await new Promise((resolve) => {
       const port = options?.port ?? 8080;
 
@@ -52,5 +57,23 @@ export class ExpressApplication implements NestApplication {
     typeOrToken: Type<TInput> | Function | string | symbol
   ): TResult {
     return this.discoveryService as any;
+  }
+
+  private initRoutes(): void {
+    const controllers = this.discoveryService.getControllers();
+
+    controllers.forEach((controller) => {
+      const routes: Router[] = Reflect.get(controller, ROUTE_METADATA);
+      routes.forEach((route) => {
+        this.#router[route.method.toLowerCase() as Lowercase<HTTP_METHOD>](
+          route.path,
+          (req, res) => {
+            res.send("/");
+          }
+        );
+      });
+    });
+
+    this.#app.use("/", this.#router);
   }
 }
