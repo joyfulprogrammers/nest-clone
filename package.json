@@ -71,6 +71,7 @@
     "*.ts": "eslint --fix"
   },
   "dependencies": {
-    "express": "^4.18.2"
+    "express": "^4.18.2",
+    "reflect-metadata": "^0.1.13"
   }
 }
