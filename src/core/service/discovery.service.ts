@@ -16,9 +16,9 @@ export class DiscoveryService {
    * 모듈을 받아서 모듈들 탐색해서 container 추가
    */
   private search(rootModule: any): void {
-    const metadata: DynamicModuleMetadata | undefined = Reflect.get(
-      rootModule,
-      MODULE_METADATA
+    const metadata: DynamicModuleMetadata | undefined = Reflect.getMetadata(
+      MODULE_METADATA,
+      rootModule
     );
 
     if (!metadata) {
@@ -31,9 +31,9 @@ export class DiscoveryService {
 
   private recur(modules: any[] = []): void {
     for (const module of modules) {
-      const metadata: DynamicModuleMetadata | undefined = Reflect.get(
-        module,
-        MODULE_METADATA
+      const metadata: DynamicModuleMetadata | undefined = Reflect.getMetadata(
+        MODULE_METADATA,
+        module
       );
 
       if (!metadata) {

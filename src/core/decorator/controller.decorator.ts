@@ -12,9 +12,9 @@ export function Controller(prefixPath = "/"): ClassDecorator {
     const router: Router[] = [];
 
     Reflect.ownKeys(target.prototype).forEach((key) => {
-      const route: Router = Reflect.get(
-        target.prototype[key],
-        HTTP_METHOD_METADATA
+      const route: Router = Reflect.getMetadata(
+        HTTP_METHOD_METADATA,
+        target.prototype[key]
       );
 
       if (route?.path && route?.method) {
@@ -25,8 +25,6 @@ export function Controller(prefixPath = "/"): ClassDecorator {
       }
     });
 
-    Reflect.defineProperty(target, ROUTE_METADATA, {
-      value: router,
-    });
+    Reflect.defineMetadata(ROUTE_METADATA, router, target);
   };
 }

@@ -13,18 +13,13 @@ export const enum HTTP_METHOD {
 function RequestMapping(method: HTTP_METHOD) {
   return function (path = "/"): MethodDecorator {
     return (target, propertyKey) => {
-      Reflect.defineProperty(
-        (target as any)[propertyKey],
+      Reflect.defineMetadata(
         HTTP_METHOD_METADATA,
         {
-          value: {
-            method,
-            path,
-          },
-          enumerable: true,
-          configurable: false,
-          writable: false,
-        }
+          method,
+          path,
+        },
+        (target as any)[propertyKey]
       );
     };
   };

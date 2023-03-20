@@ -68,7 +68,7 @@ export class ExpressApplication implements NestApplication {
     const controllers = this.discoveryService.getControllers();
 
     controllers.forEach((controller) => {
-      const routes: Router[] = Reflect.get(controller, ROUTE_METADATA);
+      const routes: Router[] = Reflect.getMetadata(ROUTE_METADATA, controller);
       routes.forEach((route) => {
         this.#router[route.method.toLowerCase() as Lowercase<HTTP_METHOD>](
           route.path,

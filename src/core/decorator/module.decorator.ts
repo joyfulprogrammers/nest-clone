@@ -2,29 +2,29 @@ export const MODULE_METADATA = Symbol("moduleMetadata");
 
 export function Global(): ClassDecorator {
   return (target: any) => {
-    const metadata = Reflect.get(target, MODULE_METADATA);
+    const metadata = Reflect.getMetadata(MODULE_METADATA, target);
 
-    Reflect.defineProperty(target, MODULE_METADATA, {
-      value: { ...metadata, global: true },
-      enumerable: true,
-      configurable: true,
-    });
+    Reflect.defineMetadata(
+      MODULE_METADATA,
+      { ...metadata, global: true },
+      target
+    );
   };
 }
 
 export function Module(metadata: ModuleMetadata): ClassDecorator {
   return (target: any) => {
-    const parentMetadata = Reflect.get(target, MODULE_METADATA);
+    const parentMetadata = Reflect.getMetadata(MODULE_METADATA, target);
 
-    Reflect.defineProperty(target, MODULE_METADATA, {
-      value: {
+    Reflect.defineMetadata(
+      MODULE_METADATA,
+      {
         ...metadata,
         module: target,
         global: parentMetadata?.global || false,
       },
-      enumerable: true,
-      configurable: true,
-    });
+      target
+    );
   };
 }
 

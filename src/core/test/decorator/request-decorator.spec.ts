@@ -22,7 +22,10 @@ describe("@controller", () => {
     class TestController {}
 
     // then
-    const metadata: Router[] = Reflect.get(TestController, ROUTE_METADATA);
+    const metadata: Router[] = Reflect.getMetadata(
+      ROUTE_METADATA,
+      TestController
+    );
     expect(metadata).toHaveLength(0);
   });
 
@@ -44,7 +47,10 @@ describe("@controller", () => {
     }
 
     // then
-    const metadata: Router[] = Reflect.get(TestController, ROUTE_METADATA);
+    const metadata: Router[] = Reflect.getMetadata(
+      ROUTE_METADATA,
+      TestController
+    );
     expect(metadata).toHaveLength(1);
     expect(metadata[0].method).toBe(method);
     expect(metadata[0].path).toBe("/");
@@ -60,7 +66,10 @@ describe("@controller", () => {
     }
 
     // then
-    const metadata: Router[] = Reflect.get(TestController, ROUTE_METADATA);
+    const metadata: Router[] = Reflect.getMetadata(
+      ROUTE_METADATA,
+      TestController
+    );
     expect(metadata).toHaveLength(1);
     expect(metadata[0].path).toBe("/");
   });
