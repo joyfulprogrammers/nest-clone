@@ -1,8 +1,8 @@
-export const REQUEST_METADATA = Symbol("requestMetadata");
-export const RESPONSE_METADATA = Symbol("responseMetadata");
-export const BODY_METADATA = Symbol("bodyMetadata");
-export const PARAM_METADATA = Symbol("paramMetadata");
-export const QUERY_METADATA = Symbol("queryMetadata");
+export const REQUEST_METADATA = Symbol("REQUEST_METADATA");
+export const RESPONSE_METADATA = Symbol("RESPONSE_METADATA");
+export const BODY_METADATA = Symbol("BODY_METADATA");
+export const PARAM_METADATA = Symbol("PARAM_METADATA");
+export const QUERY_METADATA = Symbol("QUERY_METADATA");
 
 export function Request(): ParameterDecorator {
   return (target, propertyKey, parameterIndex) => {

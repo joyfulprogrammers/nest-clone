@@ -1,4 +1,4 @@
-export const MODULE_METADATA = Symbol("moduleMetadata");
+export const MODULE_METADATA = Symbol("MODULE_METADATA");
 
 export function Global(): ClassDecorator {
   return (target: any) => {

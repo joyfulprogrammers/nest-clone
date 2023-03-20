@@ -1,4 +1,4 @@
-export const HTTP_METHOD_METADATA = Symbol("httpMethodMetadata");
+export const REQUEST_MAPPING_METADATA = Symbol("REQUEST_MAPPING_METADATA");
 
 export const enum HTTP_METHOD {
   GET = "GET",
@@ -10,16 +10,22 @@ export const enum HTTP_METHOD {
   HEAD = "HEAD",
 }
 
+export interface RequestMappingMetadata {
+  method: HTTP_METHOD;
+  path: string;
+}
+
 function RequestMapping(method: HTTP_METHOD) {
   return function (path = "/"): MethodDecorator {
     return (target, propertyKey) => {
       Reflect.defineMetadata(
-        HTTP_METHOD_METADATA,
+        REQUEST_MAPPING_METADATA,
         {
           method,
           path,
         },
-        (target as any)[propertyKey]
+        target,
+        propertyKey
       );
     };
   };

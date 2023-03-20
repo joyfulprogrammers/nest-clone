@@ -1,9 +1,5 @@
 import { describe, expect, it } from "vitest";
-import {
-  Controller,
-  ROUTE_METADATA,
-  type Router,
-} from "../../decorator/controller.decorator";
+import { Controller } from "../../decorator/controller.decorator";
 import {
   Delete,
   Get,
@@ -13,22 +9,11 @@ import {
   Patch,
   Head,
   Options,
+  REQUEST_MAPPING_METADATA,
+  type RequestMappingMetadata,
 } from "../../decorator/request-mapping.decorator";
 
 describe("request mapping decorator", () => {
-  it("should set metadata for controller", () => {
-    // given
-    @Controller("/test")
-    class TestController {}
-
-    // then
-    const metadata: Router[] = Reflect.getMetadata(
-      ROUTE_METADATA,
-      TestController
-    );
-    expect(metadata).toHaveLength(0);
-  });
-
   it.each([
     [HTTP_METHOD.GET, Get],
     [HTTP_METHOD.POST, Post],
@@ -40,37 +25,20 @@ describe("request mapping decorator", () => {
   ] as const)("should not set metadata for %s", (method, decorator) => {
     @Controller()
     class TestController {
-      @decorator()
+      @decorator("/api")
       test(): string {
         return "";
       }
     }
 
     // then
-    const metadata: Router[] = Reflect.getMetadata(
-      ROUTE_METADATA,
-      TestController.prototype
+    const metadata: RequestMappingMetadata = Reflect.getMetadata(
+      REQUEST_MAPPING_METADATA,
+      TestController.prototype,
+      "test"
     );
-    expect(metadata).toHaveLength(1);
-    expect(metadata[0].method).toBe(method);
-    expect(metadata[0].path).toBe("/");
-  });
 
-  it("should replace path with only only slash", () => {
-    @Controller("//")
-    class TestController {
-      @Get("//")
-      test(): string {
-        return "";
-      }
-    }
-
-    // then
-    const metadata: Router[] = Reflect.getMetadata(
-      ROUTE_METADATA,
-      TestController
-    );
-    expect(metadata).toHaveLength(1);
-    expect(metadata[0].path).toBe("/");
+    expect(metadata.method).toBe(method);
+    expect(metadata.path).toBe("/api");
   });
 });

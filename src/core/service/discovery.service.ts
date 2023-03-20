@@ -45,11 +45,11 @@ export class DiscoveryService {
     }
   }
 
-  getProviders(): DynamicModuleMetadata[] {
+  getProviders(): any[] {
     return this.#container.getProviders();
   }
 
-  getControllers(): DynamicModuleMetadata[] {
+  getControllers(): any[] {
     return this.#container.getControllers();
   }
 
