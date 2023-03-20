@@ -1,4 +1,7 @@
-import { type HTTP_METHOD, HTTP_METHOD_METADATA } from "./request.decorator";
+import {
+  type HTTP_METHOD,
+  HTTP_METHOD_METADATA,
+} from "./request-mapping.decorator";
 
 export const ROUTE_METADATA = Symbol("routeMetadata");
 

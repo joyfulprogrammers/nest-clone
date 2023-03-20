@@ -2,7 +2,7 @@ import request from "supertest";
 import { describe, it, expect } from "vitest";
 import { Controller } from "../../decorator/controller.decorator";
 import { Module } from "../../decorator/module.decorator";
-import { Get } from "../../decorator/request.decorator";
+import { Get } from "../../decorator/request-mapping.decorator";
 import { ExpressApplication } from "../../platform-express/express-application";
 import { DiscoveryService } from "../../service/discovery.service";
 

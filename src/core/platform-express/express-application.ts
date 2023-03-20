@@ -1,7 +1,7 @@
 import type * as http from "http";
 import express, { type Express } from "express";
 import { ROUTE_METADATA, type Router } from "../decorator/controller.decorator";
-import { type HTTP_METHOD } from "../decorator/request.decorator";
+import { type HTTP_METHOD } from "../decorator/request-mapping.decorator";
 import { type ApplicationOptions } from "../interface/application-options.interface";
 import { type Logger } from "../interface/logger.interface";
 import { type NestApplication } from "../interface/nest-application.interface";

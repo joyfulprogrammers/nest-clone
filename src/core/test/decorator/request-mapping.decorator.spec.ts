@@ -13,9 +13,9 @@ import {
   Patch,
   Head,
   Options,
-} from "../../decorator/request.decorator";
+} from "../../decorator/request-mapping.decorator";
 
-describe("@controller", () => {
+describe("request mapping decorator", () => {
   it("should set metadata for controller", () => {
     // given
     @Controller("/test")
@@ -49,7 +49,7 @@ describe("@controller", () => {
     // then
     const metadata: Router[] = Reflect.getMetadata(
       ROUTE_METADATA,
-      TestController
+      TestController.prototype
     );
     expect(metadata).toHaveLength(1);
     expect(metadata[0].method).toBe(method);
