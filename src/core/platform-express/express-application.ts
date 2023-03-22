@@ -8,6 +8,8 @@ import {
 } from "../decorator/request-mapping.decorator";
 import {
   BODY_METADATA,
+  PARAM_METADATA,
+  QUERY_METADATA,
   REQUEST_METADATA,
   type RequestPropertyMetadata,
   RESPONSE_METADATA,
@@ -110,11 +112,11 @@ export class ExpressApplication implements NestApplication {
         const bodyMetadata: RequestPropertyMetadata[] | undefined =
           Reflect.getMetadata(BODY_METADATA, controller.prototype, property);
 
-        // const paramMetadata: RequestPropertyMetadata[] | undefined =
-        //   Reflect.getMetadata(PARAM_METADATA, controller.prototype, property);
-        //
-        // const queryMetadata: RequestPropertyMetadata[] | undefined =
-        //   Reflect.getMetadata(QUERY_METADATA, controller.prototype, property);
+        const paramMetadata: RequestPropertyMetadata[] | undefined =
+          Reflect.getMetadata(PARAM_METADATA, controller.prototype, property);
+
+        const queryMetadata: RequestPropertyMetadata[] | undefined =
+          Reflect.getMetadata(QUERY_METADATA, controller.prototype, property);
 
         this.#router[metadata.method.toLowerCase() as Lowercase<HTTP_METHOD>](
           `${prefix}${metadata.path}`.replace(/\/+/g, "/"),
@@ -134,7 +136,25 @@ export class ExpressApplication implements NestApplication {
               bodyMetadata?.forEach((metadata) => {
                 const { index, property } = metadata;
                 params[index] =
-                  property && typeof req.body ? req.body?.[property] : req.body;
+                  property && typeof req.body !== "undefined"
+                    ? req.body[property]
+                    : req.body;
+              });
+
+              queryMetadata?.forEach((metadata) => {
+                const { index, property } = metadata;
+                params[index] =
+                  property && typeof req.query !== "undefined"
+                    ? req.query?.[property]
+                    : req.query;
+              });
+
+              paramMetadata?.forEach((metadata) => {
+                const { index, property } = metadata;
+                params[index] =
+                  property && typeof req.params !== "undefined"
+                    ? req.params?.[property]
+                    : req.params;
               });
 
               const result = await method(...params);
