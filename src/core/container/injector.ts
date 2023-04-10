@@ -1,14 +1,9 @@
 import { type Type } from "../type/type";
 
 export class Injector {
-  // eslint-disable-next-line @typescript-eslint/ban-types
   #container = new Map<Type | Function | string | symbol, any>();
 
-  register(
-    // eslint-disable-next-line @typescript-eslint/ban-types
-    typeOrToken: Type | Function | string | symbol,
-    cls: any
-  ): void {
+  register(typeOrToken: Type | Function | string | symbol, cls: any): void {
     if (this.#container.has(typeOrToken)) {
       return;
     }
@@ -21,7 +16,6 @@ export class Injector {
   }
 
   get<TInput, TResult>(
-    // eslint-disable-next-line @typescript-eslint/ban-types
     typeOrToken: Type<TInput> | Function | string | symbol
   ): TResult {
     return this.#container.get(typeOrToken);

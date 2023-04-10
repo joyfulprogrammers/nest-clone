@@ -6,7 +6,6 @@ export interface NestApplication {
   close: () => Promise<void>;
   getHttpServer: () => any;
   get: <TInput = any, TResult = TInput>(
-    // eslint-disable-next-line @typescript-eslint/ban-types
     typeOrToken: Type<TInput> | Function | string | symbol
   ) => TResult;
   setGlobalPrefix: (prefix: string) => void;

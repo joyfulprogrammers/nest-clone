@@ -73,7 +73,6 @@ export class ExpressApplication implements NestApplication {
   }
 
   get<TInput, TResult>(
-    // eslint-disable-next-line @typescript-eslint/ban-types
     typeOrToken: Type<TInput> | Function | string | symbol
   ): TResult {
     return this.discoveryService as any;
