@@ -81,4 +81,45 @@ describe("Injector", () => {
     // then
     expect(init).toThrowError("Circular dependency detected");
   });
+
+  it("should create instance with key", () => {
+    // given
+    class A {}
+    const injector = new Injector();
+    injector.register(A, "A");
+    injector.init();
+
+    // when
+    const instance = injector.getInstance("A");
+
+    // then
+    expect(instance).toBeInstanceOf(A);
+  });
+
+  it("should create instance with nested class dependency and key", () => {
+    // given
+    class A {}
+    @Controller()
+    class B {
+      constructor(readonly a: A) {}
+    }
+    @Controller()
+    class C {
+      constructor(readonly b: B) {}
+    }
+    const injector = new Injector();
+    injector.register(A);
+    injector.register(B, "B");
+    injector.register(C);
+    injector.init();
+
+    // when
+    const instanceB = injector.getInstance<B>("B");
+    const instanceC = injector.getInstance<C>(C);
+
+    // then
+    expect(instanceB).toBeInstanceOf(B);
+    expect(instanceB.a).toBeInstanceOf(A);
+    expect(instanceC.b).toBeInstanceOf(B);
+  });
 });

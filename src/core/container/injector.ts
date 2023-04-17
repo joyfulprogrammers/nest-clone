@@ -12,8 +12,19 @@ export class Injector {
     { target: Type; visited: boolean }
   >();
 
-  register(target: Type): void {
-    this.#dependencyRegistry.set(target.prototype, { target, visited: false });
+  register(target: Type, tokenOrKey?: Type | Function | string | symbol): void {
+    if (!tokenOrKey) {
+      this.#dependencyRegistry.set(target.prototype, {
+        target,
+        visited: false,
+      });
+      return;
+    }
+
+    this.#dependencyRegistry.set(tokenOrKey, {
+      target,
+      visited: false,
+    });
   }
 
   init(): void {
@@ -22,8 +33,20 @@ export class Injector {
     });
   }
 
-  getInstance<T = any>(tokenOrKey: Type | Function): T {
-    return this.#instanceContainer.get(tokenOrKey.prototype);
+  getInstance<T = any>(tokenOrKey: Type | Function | string | symbol): T {
+    const instance = this.#instanceContainer.get(tokenOrKey);
+
+    if (instance) {
+      return instance;
+    }
+
+    if (this.isClassType(tokenOrKey)) {
+      return this.#instanceContainer.get(tokenOrKey.prototype);
+    }
+
+    throw new Error(
+      `Cannot get instance of ${tokenOrKey.toString()} because it is not registered.`
+    );
   }
 
   private recur(
@@ -44,14 +67,20 @@ export class Injector {
       Reflect.getMetadata("design:paramtypes", info.target) ?? [];
 
     const instanceArgs: Array<InstanceType<Type>> = args.map((Arg) => {
-      const argInfo = this.#dependencyRegistry.get(Arg.prototype);
+      const [key, argInfo] =
+        [...this.#dependencyRegistry.entries()].find(
+          ([_, value]) => value.target.prototype === Arg.prototype
+        ) ?? [];
+
       if (Arg === Object) {
         throw new Error(`Circular dependency detected`);
       }
-      if (!argInfo) {
+
+      if (!key || !argInfo) {
         throw new Error(`No provider for ${Arg.name}`);
       }
-      return this.recur(argInfo, Arg.prototype);
+
+      return this.recur(argInfo, key);
     });
 
     // eslint-disable-next-line new-cap
