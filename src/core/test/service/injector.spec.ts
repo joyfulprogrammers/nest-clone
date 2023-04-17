@@ -1,22 +1,10 @@
 import { describe, it, expect } from "vitest";
 import { Injector } from "../../container/injector";
 import { Controller } from "../../decorator/controller.decorator";
+import { DependencyA } from "../fixture/DependencyA";
+import { DependencyB } from "../fixture/DependencyB";
 
 describe("Injector", () => {
-  it("should create instance with key", () => {
-    // given
-    class A {}
-    const injector = new Injector();
-    injector.register(A, "A");
-    injector.init();
-
-    // when
-    const instance = injector.getInstance("A");
-
-    // then
-    expect(instance).toBeInstanceOf(A);
-  });
-
   it("should create instance without key", () => {
     // given
     class A {}
@@ -77,5 +65,20 @@ describe("Injector", () => {
     expect(instanceB).toBeInstanceOf(B);
     expect(instanceB.a).toBeInstanceOf(A);
     expect(instanceC.b).toBeInstanceOf(B);
+  });
+
+  it("should throw error when there is circular dependencies", () => {
+    // given
+    const injector = new Injector();
+    injector.register(DependencyA);
+    injector.register(DependencyB);
+
+    // when
+    const init = (): void => {
+      injector.init();
+    };
+
+    // then
+    expect(init).toThrowError("Circular dependency detected");
   });
 });

@@ -2,55 +2,61 @@ import "reflect-metadata";
 import { type Type } from "../type/type";
 
 export class Injector {
-  /**
-   * include instance
-   */
-  #container = new Map<Type | Function | string | symbol, any>();
+  #instanceContainer = new Map<Type | Function | string | symbol, any>();
 
   /**
    * include Class, PrimitiveType...
    */
-  #info = new Map<Type | Function | string | symbol, any>();
+  #dependencyRegistry = new Map<
+    Type | Function | string | symbol,
+    { target: Type; visited: boolean }
+  >();
 
-  register(target: any, tokenOrKey?: Type | Function | string | symbol): void {
-    if (!tokenOrKey) {
-      this.#info.set(target.prototype, target);
-      return;
-    }
-
-    this.#info.set(tokenOrKey, target);
+  register(target: Type): void {
+    this.#dependencyRegistry.set(target.prototype, { target, visited: false });
   }
 
   init(): void {
-    this.#info.forEach((Clazz, key) => {
-      this.recur(Clazz, key);
+    this.#dependencyRegistry.forEach((info, key) => {
+      this.recur(info, key);
     });
   }
 
-  getInstance<T = any>(tokenOrKey: Type | Function | string | symbol): T {
-    if (this.isClassType(tokenOrKey)) {
-      return this.#container.get(tokenOrKey.prototype);
-    }
-    return this.#container.get(tokenOrKey);
+  getInstance<T = any>(tokenOrKey: Type | Function): T {
+    return this.#instanceContainer.get(tokenOrKey.prototype);
   }
 
   private recur(
-    Clazz: Type,
+    info: { target: Type; visited: boolean },
     tokenOrKey: Type | Function | string | symbol
   ): InstanceType<Type> {
-    const savedInstance = this.#container.get(tokenOrKey);
+    const savedInstance = this.#instanceContainer.get(tokenOrKey);
     if (savedInstance) {
       return savedInstance;
     }
 
-    const args: Type[] = Reflect.getMetadata("design:paramtypes", Clazz) ?? [];
+    if (info.visited) {
+      throw new Error(`Circular dependency detected`);
+    }
+    info.visited = true;
 
-    const instanceArgs: Array<InstanceType<Type>> = args.map((Arg) =>
-      this.recur(Arg, Arg.prototype)
-    );
+    const args: Type[] =
+      Reflect.getMetadata("design:paramtypes", info.target) ?? [];
 
-    const instance = new Clazz(...instanceArgs);
-    this.#container.set(tokenOrKey, instance);
+    const instanceArgs: Array<InstanceType<Type>> = args.map((Arg) => {
+      const argInfo = this.#dependencyRegistry.get(Arg.prototype);
+      if (Arg === Object) {
+        throw new Error(`Circular dependency detected`);
+      }
+      if (!argInfo) {
+        throw new Error(`No provider for ${Arg.name}`);
+      }
+      return this.recur(argInfo, Arg.prototype);
+    });
+
+    // eslint-disable-next-line new-cap
+    const instance = new info.target(...instanceArgs);
+    this.#instanceContainer.set(tokenOrKey, instance);
 
     return instance;
   }
