@@ -15,5 +15,5 @@ export interface ModuleMetadata {
 
 export interface DynamicModuleMetadata extends ModuleMetadata {
   module: any;
-  global: boolean;
+  global?: boolean;
 }
