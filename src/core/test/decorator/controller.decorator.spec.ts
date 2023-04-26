@@ -13,7 +13,7 @@ describe("controller decorator", () => {
     // then
     const metadata: string = Reflect.getMetadata(
       CONTROLLER_METADATA,
-      TestController
+      TestController.prototype
     );
     expect(metadata).toBe("/test");
   });

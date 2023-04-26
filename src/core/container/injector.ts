@@ -12,6 +12,10 @@ export class Injector {
     { target: Type; visited: boolean }
   >();
 
+  registerByInstance(instance: any): void {
+    this.#instanceContainer.set(instance.constructor.prototype, instance);
+  }
+
   register(target: Type, tokenOrKey?: Type | Function | string | symbol): void {
     if (!tokenOrKey) {
       this.#dependencyRegistry.set(target.prototype, {

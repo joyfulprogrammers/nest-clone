@@ -302,4 +302,38 @@ describe("ExpressApplication", () => {
 
     await app.close();
   });
+
+  it("should hello", async () => {
+    class ServiceA {
+      hello(): string {
+        return "hello, world!";
+      }
+    }
+
+    @Controller("/api")
+    class ControllerA {
+      constructor(private readonly serviceA: ServiceA) {}
+
+      @Get("/")
+      test(): string {
+        return this.serviceA.hello();
+      }
+    }
+
+    @Module({ providers: [ServiceA], controllers: [ControllerA] })
+    class AppModule {}
+    const app = new ExpressApplication(new DiscoveryService(AppModule));
+
+    await app.listen({ port: 0 });
+    const server = app.getHttpServer();
+
+    // when
+    const response = await request(server).get("/api");
+
+    // then
+    expect(response.status).toBe(200);
+    expect(response.text).toBe("hello, world!");
+
+    await app.close();
+  });
 });

@@ -75,98 +75,114 @@ export class ExpressApplication implements NestApplication {
   get<TInput, TResult>(
     typeOrToken: Type<TInput> | Function | string | symbol
   ): TResult {
-    return this.discoveryService as any;
+    return this.discoveryService.get(typeOrToken);
   }
 
   private initRoutes(): void {
     const controllers = this.discoveryService.getControllers();
 
-    controllers.forEach((controller) => {
+    controllers.forEach((instanceWrapper) => {
       const prefix: string =
-        Reflect.getMetadata(CONTROLLER_METADATA, controller) || "";
+        Reflect.getMetadata(CONTROLLER_METADATA, instanceWrapper.prototype) ||
+        "";
 
-      Object.getOwnPropertyNames(controller.prototype).forEach((property) => {
-        const metadata: RequestMappingMetadata | undefined =
-          Reflect.getMetadata(
-            REQUEST_MAPPING_METADATA,
-            controller.prototype,
+      Object.getOwnPropertyNames(instanceWrapper.prototype).forEach(
+        (property) => {
+          const metadata: RequestMappingMetadata | undefined =
+            Reflect.getMetadata(
+              REQUEST_MAPPING_METADATA,
+              instanceWrapper.prototype,
+              property
+            );
+
+          if (!metadata) {
+            return;
+          }
+
+          const requestIndex: number | undefined = Reflect.getMetadata(
+            REQUEST_METADATA,
+            instanceWrapper.prototype,
+            property
+          );
+          const responseIndex: number | undefined = Reflect.getMetadata(
+            RESPONSE_METADATA,
+            instanceWrapper.prototype,
             property
           );
 
-        if (!metadata) {
-          return;
-        }
+          const bodyMetadata: RequestPropertyMetadata[] | undefined =
+            Reflect.getMetadata(
+              BODY_METADATA,
+              instanceWrapper.prototype,
+              property
+            );
 
-        const requestIndex: number | undefined = Reflect.getMetadata(
-          REQUEST_METADATA,
-          controller.prototype,
-          property
-        );
-        const responseIndex: number | undefined = Reflect.getMetadata(
-          RESPONSE_METADATA,
-          controller.prototype,
-          property
-        );
+          const paramMetadata: RequestPropertyMetadata[] | undefined =
+            Reflect.getMetadata(
+              PARAM_METADATA,
+              instanceWrapper.prototype,
+              property
+            );
 
-        const bodyMetadata: RequestPropertyMetadata[] | undefined =
-          Reflect.getMetadata(BODY_METADATA, controller.prototype, property);
+          const queryMetadata: RequestPropertyMetadata[] | undefined =
+            Reflect.getMetadata(
+              QUERY_METADATA,
+              instanceWrapper.prototype,
+              property
+            );
 
-        const paramMetadata: RequestPropertyMetadata[] | undefined =
-          Reflect.getMetadata(PARAM_METADATA, controller.prototype, property);
+          this.#router[metadata.method.toLowerCase() as Lowercase<HTTP_METHOD>](
+            `${prefix}${metadata.path}`.replace(/\/+/g, "/"),
+            // eslint-disable-next-line @typescript-eslint/no-misused-promises
+            async (req, res, next) => {
+              try {
+                const params = [];
+                if (requestIndex !== undefined) {
+                  params[requestIndex] = req;
+                }
 
-        const queryMetadata: RequestPropertyMetadata[] | undefined =
-          Reflect.getMetadata(QUERY_METADATA, controller.prototype, property);
+                if (responseIndex !== undefined) {
+                  params[responseIndex] = res;
+                }
 
-        this.#router[metadata.method.toLowerCase() as Lowercase<HTTP_METHOD>](
-          `${prefix}${metadata.path}`.replace(/\/+/g, "/"),
-          // eslint-disable-next-line @typescript-eslint/no-misused-promises
-          async (req, res, next) => {
-            try {
-              const method = controller.prototype[property];
-              const params = [];
-              if (requestIndex !== undefined) {
-                params[requestIndex] = req;
+                bodyMetadata?.forEach((metadata) => {
+                  const { index, property } = metadata;
+                  params[index] =
+                    property && typeof req.body !== "undefined"
+                      ? req.body[property]
+                      : req.body;
+                });
+
+                queryMetadata?.forEach((metadata) => {
+                  const { index, property } = metadata;
+                  params[index] =
+                    property && typeof req.query !== "undefined"
+                      ? req.query?.[property]
+                      : req.query;
+                });
+
+                paramMetadata?.forEach((metadata) => {
+                  const { index, property } = metadata;
+                  params[index] =
+                    property && typeof req.params !== "undefined"
+                      ? req.params?.[property]
+                      : req.params;
+                });
+
+                const result = await instanceWrapper.instance[property](
+                  ...params
+                );
+
+                typeof result === "object" && result !== null
+                  ? res.json(result)
+                  : res.send(result.toString());
+              } catch (err) {
+                next(err);
               }
-
-              if (responseIndex !== undefined) {
-                params[responseIndex] = res;
-              }
-
-              bodyMetadata?.forEach((metadata) => {
-                const { index, property } = metadata;
-                params[index] =
-                  property && typeof req.body !== "undefined"
-                    ? req.body[property]
-                    : req.body;
-              });
-
-              queryMetadata?.forEach((metadata) => {
-                const { index, property } = metadata;
-                params[index] =
-                  property && typeof req.query !== "undefined"
-                    ? req.query?.[property]
-                    : req.query;
-              });
-
-              paramMetadata?.forEach((metadata) => {
-                const { index, property } = metadata;
-                params[index] =
-                  property && typeof req.params !== "undefined"
-                    ? req.params?.[property]
-                    : req.params;
-              });
-
-              const result = await method(...params);
-
-              typeof result === "object" && result !== null
-                ? res.json(result)
-                : res.send(result.toString());
-            } catch (err) {
-              next(err);
             }
-          }
-        );
-      });
+          );
+        }
+      );
     });
     this.#app.use(this.#globalPrefix, this.#router);
   }

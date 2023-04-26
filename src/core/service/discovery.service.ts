@@ -10,9 +10,10 @@ import { type Type } from "../type/type";
 
 export class DiscoveryService {
   #container = new ContainerContextManager();
-  #inject: Injector = new Injector();
+  #injector: Injector = new Injector();
 
   constructor(private readonly rootModule: Type) {
+    this.#injector.registerByInstance(this);
     this.search(rootModule);
   }
 
@@ -31,7 +32,7 @@ export class DiscoveryService {
     }
 
     this.register(metadata);
-    this.#inject.init();
+    this.#injector.init();
   }
 
   private isDynamicModule(
@@ -44,16 +45,16 @@ export class DiscoveryService {
     this.#container.addModule(module);
 
     module.controllers?.forEach((controller) => {
-      this.#inject.register(controller);
+      this.#injector.register(controller);
     });
 
     module.providers?.forEach((provider) => {
       if ("useClass" in provider) {
-        this.#inject.register(provider.useClass, provider.provide);
+        this.#injector.register(provider.useClass, provider.provide);
         return;
       }
 
-      this.#inject.register(provider);
+      this.#injector.register(provider);
     });
 
     this.recur(module.imports);
@@ -83,13 +84,13 @@ export class DiscoveryService {
     return this.#container.getProviders().map((provider) => {
       if ("provide" in provider) {
         return {
-          instance: this.#inject.getInstance(provider.provide),
+          instance: this.#injector.getInstance(provider.provide),
           prototype: provider.useClass.prototype,
         };
       }
 
       return {
-        instance: this.#inject.getInstance(provider),
+        instance: this.#injector.getInstance(provider),
         prototype: provider.prototype,
       };
     });
@@ -97,12 +98,18 @@ export class DiscoveryService {
 
   getControllers(): InstanceWrapper[] {
     return this.#container.getControllers().map((controller) => ({
-      instance: this.#inject.getInstance(controller),
+      instance: this.#injector.getInstance(controller),
       prototype: controller.prototype,
     }));
   }
 
   getModules(): ModuleMetadata[] {
     return this.#container.getModules();
+  }
+
+  get<TInput, TResult>(
+    typeOrToken: Type<TInput> | Function | string | symbol
+  ): TResult {
+    return this.#injector.getInstance(typeOrToken);
   }
 }
