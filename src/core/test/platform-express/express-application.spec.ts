@@ -5,6 +5,7 @@ import {
 import request from "supertest";
 import { describe, it, expect } from "vitest";
 import { Controller } from "../../decorator/controller.decorator";
+import { Injectable } from "../../decorator/injectable.decorator";
 import { Module } from "../../decorator/module.decorator";
 import {
   Get,
@@ -304,6 +305,7 @@ describe("ExpressApplication", () => {
   });
 
   it("should hello", async () => {
+    @Injectable()
     class ServiceA {
       hello(): string {
         return "hello, world!";
