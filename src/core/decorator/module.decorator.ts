@@ -1,3 +1,5 @@
+import { type ModuleMetadata } from "../interface/module.interface";
+
 export const MODULE_METADATA = Symbol("MODULE_METADATA");
 
 export function Global(): ClassDecorator {
@@ -26,16 +28,4 @@ export function Module(metadata: ModuleMetadata): ClassDecorator {
       target
     );
   };
-}
-
-export interface ModuleMetadata {
-  imports?: any[];
-  providers?: any[];
-  controllers?: any[];
-  exports?: any[];
-}
-
-export interface DynamicModuleMetadata extends ModuleMetadata {
-  module: any;
-  global: boolean;
 }
