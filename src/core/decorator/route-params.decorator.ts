@@ -6,6 +6,10 @@ export const QUERY_METADATA = Symbol("QUERY_METADATA");
 
 export function Request(): ParameterDecorator {
   return (target, propertyKey, parameterIndex) => {
+    if (!propertyKey) {
+      return;
+    }
+
     Reflect.defineMetadata(
       REQUEST_METADATA,
       parameterIndex,
@@ -17,6 +21,10 @@ export function Request(): ParameterDecorator {
 
 export function Response(): ParameterDecorator {
   return (target, propertyKey, parameterIndex) => {
+    if (!propertyKey) {
+      return;
+    }
+
     Reflect.defineMetadata(
       RESPONSE_METADATA,
       parameterIndex,
@@ -33,6 +41,10 @@ export interface RequestPropertyMetadata {
 
 export function Body(property?: string): ParameterDecorator {
   return (target, propertyKey, parameterIndex) => {
+    if (!propertyKey) {
+      return;
+    }
+
     const metadata: RequestPropertyMetadata[] =
       Reflect.getMetadata(BODY_METADATA, target, propertyKey) || [];
 
@@ -47,6 +59,10 @@ export function Body(property?: string): ParameterDecorator {
 
 export function Param(property?: string): ParameterDecorator {
   return (target, propertyKey, parameterIndex) => {
+    if (!propertyKey) {
+      return;
+    }
+
     const metadata: RequestPropertyMetadata[] =
       Reflect.getMetadata(PARAM_METADATA, target, propertyKey) || [];
 
@@ -61,6 +77,9 @@ export function Param(property?: string): ParameterDecorator {
 
 export function Query(property?: string): ParameterDecorator {
   return (target, propertyKey, parameterIndex) => {
+    if (!propertyKey) {
+      return;
+    }
     const metadata: RequestPropertyMetadata[] =
       Reflect.getMetadata(QUERY_METADATA, target, propertyKey) || [];
 
