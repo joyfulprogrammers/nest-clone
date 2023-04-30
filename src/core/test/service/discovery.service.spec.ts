@@ -96,4 +96,23 @@ describe("DiscoveryService", () => {
     expect(controller.instance.a).toBeInstanceOf(ServiceA);
     expect(controller.instance.b).toBeInstanceOf(ServiceB);
   });
+
+  it("getProviders with useValue", () => {
+    // given
+    class ServiceA {}
+    const instance = new ServiceA();
+    const token = Symbol("token");
+
+    @Module({
+      providers: [{ provide: token, useValue: instance }],
+    })
+    class AppModule {}
+    const discoveryService = new DiscoveryService(AppModule);
+
+    // when
+    const result = discoveryService.get(token);
+
+    // then
+    expect(result).toBe(instance);
+  });
 });

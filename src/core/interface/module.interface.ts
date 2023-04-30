@@ -1,10 +1,18 @@
 import { type Type } from "../type/type";
 
-export interface ClassProvider {
-  provide: Type;
+interface Provider {
+  provide: Type | symbol;
+}
+
+export interface ClassProvider extends Provider {
   useClass: Type;
 }
-export type ProviderMetadata = Type | ClassProvider;
+
+export interface ValueProvider extends Provider {
+  useValue: any;
+}
+
+export type ProviderMetadata = Type | ClassProvider | ValueProvider;
 
 export interface ModuleMetadata {
   imports?: Array<DynamicModuleMetadata | Type>;

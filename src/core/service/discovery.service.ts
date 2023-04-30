@@ -54,6 +54,11 @@ export class DiscoveryService {
         return;
       }
 
+      if ("useValue" in provider) {
+        this.#injector.registerByInstance(provider.useValue, provider.provide);
+        return;
+      }
+
       this.#injector.register(provider);
     });
 

@@ -12,7 +12,15 @@ export class Injector {
     { target: Type; visited: boolean }
   >();
 
-  registerByInstance(instance: any): void {
+  registerByInstance(
+    instance: any,
+    tokenOrKey?: Type | Function | string | symbol
+  ): void {
+    if (tokenOrKey) {
+      this.#instanceContainer.set(tokenOrKey, instance);
+      return;
+    }
+
     this.#instanceContainer.set(instance.constructor.prototype, instance);
   }
 
