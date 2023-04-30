@@ -16,6 +16,10 @@ export class Injector {
     instance: any,
     tokenOrKey?: Type | Function | string | symbol
   ): void {
+    if (this.isClassType(instance)) {
+      throw new Error("Can register only class instance.");
+    }
+
     if (tokenOrKey) {
       this.#instanceContainer.set(tokenOrKey, instance);
       return;
