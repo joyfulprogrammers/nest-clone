@@ -1,11 +1,11 @@
-import { DependencyB } from "./DependencyB";
+import { DependencyA } from "./DependencyA";
 import { Controller } from "../../decorator/controller.decorator";
 import { forwardRef, Inject } from "../../decorator/inject.decorator";
 
 @Controller()
-export class DependencyA {
+export class DependencyC {
   constructor(
-    @Inject(forwardRef(() => DependencyB))
-    private readonly dependencyB: DependencyB
+    @Inject(forwardRef(() => DependencyA))
+    private readonly dependencyA: DependencyA
   ) {}
 }

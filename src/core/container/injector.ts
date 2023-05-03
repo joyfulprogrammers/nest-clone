@@ -1,15 +1,18 @@
 import "reflect-metadata";
+import { INJECT_METADATA } from "../decorator/inject.decorator";
 import { type Type } from "../type/type";
 
 export class Injector {
   #instanceContainer = new Map<Type | Function | string | symbol, any>();
+
+  #lazyLoadings: any[] = [];
 
   /**
    * include Class, PrimitiveType...
    */
   #dependencyRegistry = new Map<
     Type | Function | string | symbol,
-    { target: Type; visited: boolean }
+    { target: Type; instance: any }
   >();
 
   registerByInstance(
@@ -32,14 +35,14 @@ export class Injector {
     if (!tokenOrKey) {
       this.#dependencyRegistry.set(target.prototype, {
         target,
-        visited: false,
+        instance: Object.create(target.prototype),
       });
       return;
     }
 
     this.#dependencyRegistry.set(tokenOrKey, {
       target,
-      visited: false,
+      instance: Object.create(target.prototype),
     });
   }
 
@@ -47,6 +50,7 @@ export class Injector {
     this.#dependencyRegistry.forEach((info, key) => {
       this.recur(info, key);
     });
+    this.#lazyLoadings.forEach((fn) => fn());
   }
 
   getInstance<T = any>(tokenOrKey: Type | Function | string | symbol): T {
@@ -66,7 +70,7 @@ export class Injector {
   }
 
   private recur(
-    info: { target: Type; visited: boolean },
+    info: { target: Type; instance: any },
     tokenOrKey: Type | Function | string | symbol
   ): InstanceType<Type> {
     const savedInstance = this.#instanceContainer.get(tokenOrKey);
@@ -74,30 +78,57 @@ export class Injector {
       return savedInstance;
     }
 
-    if (info.visited) {
-      throw new Error(`Circular dependency detected`);
-    }
-    info.visited = true;
-
     const args: Type[] =
       Reflect.getMetadata("design:paramtypes", info.target) ?? [];
+    const injectMetadatas: Array<{ index: number; key: any }> =
+      Reflect.getMetadata(INJECT_METADATA, info.target) || [];
 
-    const instanceArgs: Array<InstanceType<Type>> = args.map((Arg) => {
+    const instanceArgs: Array<InstanceType<Type>> = args.map((Arg, index) => {
+      const injectKey = injectMetadatas.find(({ index: i }) => i === index);
+      if (injectKey) {
+        if ("forwardRef" in injectKey.key) {
+          const instance = this.#dependencyRegistry.get(
+            (injectKey.key.forwardRef() as Type).prototype
+          )?.instance;
+
+          this.#lazyLoadings.push(() => {
+            const source = this.#instanceContainer.get(
+              injectKey.key.forwardRef().prototype
+            );
+            this.#instanceContainer.set(
+              injectKey.key.forwardRef().prototype,
+              Object.assign(instanceArgs[injectKey.index], source)
+            );
+          });
+
+          return instance;
+        }
+      }
       const [key, argInfo] =
         [...this.#dependencyRegistry.entries()].find(
           ([_, value]) => value.target.prototype === Arg.prototype
         ) ?? [];
 
-      if (Arg === Object) {
-        throw new Error(`Circular dependency detected`);
-      }
-
       if (!key || !argInfo) {
-        throw new Error(`No provider for ${Arg.name}`);
+        throw new Error(`Circular dependency detected`);
       }
 
       return this.recur(argInfo, key);
     });
+
+    // this.#lazyLoadings.push(() => {
+    //   injectMetadatas.forEach((metadata) => {
+    //     if ("forwardRef" in metadata.key) {
+    //       const source = this.#instanceContainer.get(
+    //         metadata.key.forwardRef().prototype
+    //       );
+    //       this.#instanceContainer.set(
+    //         metadata.key.forwardRef().prototype,
+    //         Object.assign(instanceArgs[metadata.index], source)
+    //       );
+    //     }
+    //   });
+    // });
 
     // eslint-disable-next-line new-cap
     const instance = new info.target(...instanceArgs);

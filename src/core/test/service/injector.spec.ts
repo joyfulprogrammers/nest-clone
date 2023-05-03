@@ -3,6 +3,7 @@ import { Injector } from "../../container/injector";
 import { Controller } from "../../decorator/controller.decorator";
 import { DependencyA } from "../fixture/DependencyA";
 import { DependencyB } from "../fixture/DependencyB";
+import { DependencyC } from "../fixture/DependencyC";
 
 describe("Injector", () => {
   it("should create instance without key", () => {
@@ -67,21 +68,6 @@ describe("Injector", () => {
     expect(instanceC.b).toBeInstanceOf(B);
   });
 
-  it("should throw error when there is circular dependencies", () => {
-    // given
-    const injector = new Injector();
-    injector.register(DependencyA);
-    injector.register(DependencyB);
-
-    // when
-    const init = (): void => {
-      injector.init();
-    };
-
-    // then
-    expect(init).toThrowError("Circular dependency detected");
-  });
-
   it("should create instance with key", () => {
     // given
     class A {}
@@ -121,5 +107,28 @@ describe("Injector", () => {
     expect(instanceB).toBeInstanceOf(B);
     expect(instanceB.a).toBeInstanceOf(A);
     expect(instanceC.b).toBeInstanceOf(B);
+  });
+
+  it("should handle circular dependency if forwardRef provided", async () => {
+    // given
+    const injector = new Injector();
+    injector.register(DependencyA);
+    injector.register(DependencyB);
+    injector.register(DependencyC);
+
+    // when
+    injector.init();
+
+    // then
+    const instanceA = injector.getInstance(DependencyA);
+    const instanceB = injector.getInstance(DependencyB);
+    const instanceC = injector.getInstance(DependencyC);
+
+    expect(instanceA).toBeInstanceOf(DependencyA);
+    expect(instanceB).toBeInstanceOf(DependencyB);
+    expect(instanceC).toBeInstanceOf(DependencyC);
+    expect(instanceA.dependencyB).toBe(instanceB);
+    expect(instanceB.dependencyC).toBe(instanceC);
+    expect(instanceC.dependencyA).toBe(instanceA);
   });
 });
