@@ -12,6 +12,10 @@ export function Inject(
       return;
     }
 
+    if ("forwardRef" in typeOrToken) {
+      target.prototype.isForwardRef = true;
+    }
+
     const metadata = Reflect.getMetadata(INJECT_METADATA, target) ?? [];
 
     Reflect.defineMetadata(

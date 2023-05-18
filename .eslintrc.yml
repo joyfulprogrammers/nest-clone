@@ -25,4 +25,5 @@ rules: {
   "@typescript-eslint/strict-boolean-expressions": 0,
   "@typescript-eslint/no-extraneous-class": 0,
   "@typescript-eslint/ban-types": 0,
+  "new-cap": 0,
 }
